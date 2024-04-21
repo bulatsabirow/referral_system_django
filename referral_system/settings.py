@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.contrib.auth import get_user_model
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -39,7 +41,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
+    "drfpasswordless",
+    "phonenumber_field",
+    "drf_spectacular",
     "app",
+    "user",
 ]
 
 MIDDLEWARE = [
@@ -51,6 +57,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
 
 ROOT_URLCONF = "referral_system.urls"
 
@@ -87,6 +97,19 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "user.User"
+
+# Passwordless Authentication settings
+CALLBACK_TOKEN_LENGTH = 4
+
+PASSWORDLESS_USER_MOBILE_FIELD_NAME = "phone_number"
+
+PASSWORDLESS_AUTH = {"PASSWORDLESS_AUTH_TYPES": ["MOBILE"]}
+
+PASSWORDLESS_TEST_SUPPRESSION = DEBUG
+PASSWORDLESS_MOBILE_NOREPLY_NUMBER = os.getenv(
+    "PASSWORDLESS_MOBILE_NOREPLY_NUMBER", "12345678900"
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -128,3 +151,7 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Phone Number Field settings
+
+PHONENUMBER_DEFAULT_REGION = "RU"
