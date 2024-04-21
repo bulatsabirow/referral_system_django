@@ -19,12 +19,19 @@ class User(AbstractBaseUser):
     invite_code = models.CharField(
         max_length=InviteCode.length, default=get_invite_code, unique=True
     )
+    referrer = models.ForeignKey(
+        "self",
+        related_name="referee_set",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
 
     USERNAME_FIELD = "mobile"
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return "User(%s)" % self.mobile
+        return "User(mobile=%s)" % self.mobile
 
 
 class CallbackToken(AbstractBaseCallbackToken):

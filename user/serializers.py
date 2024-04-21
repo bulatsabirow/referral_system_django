@@ -89,6 +89,29 @@ class CallbackTokenAuthSerializer(AbstractBaseCallbackTokenSerializer):
 
 
 class UserRetrieveSerializer(serializers.ModelSerializer):
+    activated_invite_code = serializers.CharField(allow_null=True)
+
     class Meta:
         model = User
-        fields = ("id", "mobile", "invite_code")
+        fields = ("id", "mobile", "invite_code", "activated_invite_code")
+
+
+class InviteCodeActivateSerializer(serializers.Serializer):
+    invite_code = serializers.CharField(max_length=6)
+
+    def update(self, instance, validated_data):
+        # check whether entered invite code exists
+        if not User.objects.filter(invite_code=validated_data["invite_code"]).exists():
+            raise serializers.ValidationError(detail=_("Invalid invite code."))
+
+        referrer = User.objects.get(invite_code=validated_data["invite_code"])
+
+        # check whether user have already activated any invite code
+        if instance.referrer_id:
+            raise serializers.ValidationError(
+                detail=_("You already have activated invite code.")
+            )
+
+        instance.referrer_id = referrer.id
+        instance.save()
+        return instance

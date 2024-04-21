@@ -1,14 +1,19 @@
+from django.db.models import F
 from django.shortcuts import render
 from drfpasswordless.serializers import MobileAuthSerializer
 from drfpasswordless.settings import api_settings
 from drfpasswordless.views import AbstractBaseObtainAuthToken
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from user.models import CallbackToken, User
-from user.serializers import CallbackTokenAuthSerializer, UserRetrieveSerializer
+from user.serializers import (
+    CallbackTokenAuthSerializer,
+    UserRetrieveSerializer,
+    InviteCodeActivateSerializer,
+)
 from user.services import TokenService
 
 
@@ -90,9 +95,29 @@ class ObtainAuthTokenFromCallbackToken(AbstractBaseObtainAuthToken):
     serializer_class = CallbackTokenAuthSerializer
 
 
-class UserRetrieveAPIView(generics.RetrieveAPIView):
+class LookupFieldMixin:
     lookup_field = "id"
     lookup_url_kwarg = "id"
     permission_classes = (IsAuthenticated,)
-    serializer_class = UserRetrieveSerializer
+
+
+class UserRetrieveUpdateAPIView(LookupFieldMixin, generics.RetrieveUpdateAPIView):
     queryset = User.objects
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return UserRetrieveSerializer
+
+        return InviteCodeActivateSerializer
+
+    def get_queryset(self):
+        if self.request.method == "GET":
+            return self.queryset.select_related("referrer").annotate(
+                activated_invite_code=F("referrer__invite_code")
+            )
+
+        return self.queryset
+
+    def update(self, request, *args, **kwargs):
+        super().update(request, *args, **kwargs)
+        return Response(data=None, status=status.HTTP_204_NO_CONTENT)
