@@ -9,11 +9,9 @@ from phonenumber_field.modelfields import PhoneNumberField
 from user.services import generate_numeric_token
 
 
-class User(models.Model):
-    mobile = PhoneNumberField(max_length=11, unique=True)
+class User(AbstractBaseUser):
+    mobile = PhoneNumberField(max_length=12, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_active = is_authenticated = True
-    is_anonymous = False
 
     USERNAME_FIELD = "mobile"
     REQUIRED_FIELDS = []

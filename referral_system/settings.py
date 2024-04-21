@@ -17,7 +17,6 @@ from django.contrib.auth import get_user_model
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = "django-insecure-r1mq5tuf&hr!gf(hs-!(ula=qg%rmvf-2b7-99h#exn3iv5=h+
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -82,7 +80,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "referral_system.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -104,12 +101,13 @@ CALLBACK_TOKEN_LENGTH = 4
 
 PASSWORDLESS_USER_MOBILE_FIELD_NAME = "phone_number"
 
-PASSWORDLESS_AUTH = {"PASSWORDLESS_AUTH_TYPES": ["MOBILE"]}
-
-PASSWORDLESS_TEST_SUPPRESSION = DEBUG
-PASSWORDLESS_MOBILE_NOREPLY_NUMBER = os.getenv(
-    "PASSWORDLESS_MOBILE_NOREPLY_NUMBER", "12345678900"
-)
+PASSWORDLESS_AUTH = {
+    "PASSWORDLESS_AUTH_TYPES": ["MOBILE"],
+    "PASSWORDLESS_TEST_SUPPRESSION": DEBUG,
+    "PASSWORDLESS_MOBILE_NOREPLY_NUMBER": os.environ.get(
+        "PASSWORDLESS_MOBILE_NOREPLY_NUMBER", "12345678900"
+    ),
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -129,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -140,7 +137,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
