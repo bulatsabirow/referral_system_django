@@ -86,3 +86,9 @@ class CallbackTokenAuthSerializer(AbstractBaseCallbackTokenSerializer):
         except ValidationError:
             msg = _("Invalid alias parameters provided.")
             raise serializers.ValidationError(msg)
+
+
+class UserRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "mobile", "invite_code")

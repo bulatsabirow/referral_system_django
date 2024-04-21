@@ -2,13 +2,13 @@ from django.shortcuts import render
 from drfpasswordless.serializers import MobileAuthSerializer
 from drfpasswordless.settings import api_settings
 from drfpasswordless.views import AbstractBaseObtainAuthToken
-from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework import status, generics
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from user.models import CallbackToken
-from user.serializers import CallbackTokenAuthSerializer
+from user.models import CallbackToken, User
+from user.serializers import CallbackTokenAuthSerializer, UserRetrieveSerializer
 from user.services import TokenService
 
 
@@ -88,3 +88,11 @@ class ObtainAuthTokenFromCallbackToken(AbstractBaseObtainAuthToken):
 
     permission_classes = (AllowAny,)
     serializer_class = CallbackTokenAuthSerializer
+
+
+class UserRetrieveAPIView(generics.RetrieveAPIView):
+    lookup_field = "id"
+    lookup_url_kwarg = "id"
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserRetrieveSerializer
+    queryset = User.objects
