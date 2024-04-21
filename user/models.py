@@ -5,16 +5,26 @@ from django.db import models
 from drfpasswordless.models import AbstractBaseCallbackToken
 from phonenumber_field.modelfields import PhoneNumberField
 
-
+from user.schema import InviteCode
 from user.services import generate_numeric_token
+
+
+def get_invite_code():
+    return InviteCode().code
 
 
 class User(AbstractBaseUser):
     mobile = PhoneNumberField(max_length=12, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    invite_code = models.CharField(
+        max_length=InviteCode.length, default=get_invite_code, unique=True
+    )
 
     USERNAME_FIELD = "mobile"
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return "User(%s)" % self.mobile
 
 
 class CallbackToken(AbstractBaseCallbackToken):
