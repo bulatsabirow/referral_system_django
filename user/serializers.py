@@ -32,7 +32,7 @@ def token_age_validator(value):
 
 class MobileAuthSerializer(DjangoMobileAuthSerializer):
     phone_regex = RegexValidator(
-        regex=rf"^\+[1-9]\d{settings.PHONENUMBER_LENGTH - 2}$",
+        regex=r"^\+[1-9]\d{%d}$" % (settings.PHONENUMBER_LENGTH - 2,),
         message="Mobile number must be entered in the format:" " '+11234567890'.",
     )
     mobile = serializers.CharField(
@@ -42,7 +42,7 @@ class MobileAuthSerializer(DjangoMobileAuthSerializer):
 
 class AbstractBaseCallbackTokenSerializer(DjangoAbstractBaseCallbackTokenSerializer):
     phone_regex = RegexValidator(
-        regex=rf"^\+[1-9]\d{settings.PHONENUMBER_LENGTH - 2}$",
+        regex=r"^\+[1-9]\d{%d}$" % (settings.PHONENUMBER_LENGTH - 2,),
         message="Mobile number must be entered in the format:" " '+11234567890'.",
     )
     mobile = serializers.CharField(

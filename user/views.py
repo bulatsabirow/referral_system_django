@@ -1,4 +1,5 @@
 from django.db.models import F
+from django.shortcuts import get_object_or_404
 from drfpasswordless.settings import api_settings
 from drfpasswordless.views import AbstractBaseObtainAuthToken
 from rest_framework import status, generics
@@ -95,8 +96,6 @@ class ObtainAuthTokenFromCallbackToken(AbstractBaseObtainAuthToken):
 
 
 class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-    lookup_field = "id"
-    lookup_url_kwarg = "id"
     permission_classes = (IsAuthenticated,)
     queryset = User.objects
 
@@ -113,6 +112,16 @@ class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
             )
 
         return self.queryset.prefetch_related("referrer")
+
+    def get_object(self):
+        queryset = self.filter_queryset(self.get_queryset())
+
+        obj = get_object_or_404(queryset, id=self.request.user.id)
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
 
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)
