@@ -1,9 +1,7 @@
 from django.db.models import F
-from django.shortcuts import render
-from drfpasswordless.serializers import MobileAuthSerializer
 from drfpasswordless.settings import api_settings
 from drfpasswordless.views import AbstractBaseObtainAuthToken
-from rest_framework import status, generics, permissions
+from rest_framework import status, generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +11,7 @@ from user.serializers import (
     CallbackTokenAuthSerializer,
     UserRetrieveSerializer,
     InviteCodeActivateSerializer,
+    MobileAuthSerializer,
 )
 from user.services import TokenService
 
@@ -95,13 +94,10 @@ class ObtainAuthTokenFromCallbackToken(AbstractBaseObtainAuthToken):
     serializer_class = CallbackTokenAuthSerializer
 
 
-class LookupFieldMixin:
+class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
     lookup_field = "id"
     lookup_url_kwarg = "id"
     permission_classes = (IsAuthenticated,)
-
-
-class UserRetrieveUpdateAPIView(LookupFieldMixin, generics.RetrieveUpdateAPIView):
     queryset = User.objects
 
     def get_serializer_class(self):

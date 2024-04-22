@@ -157,3 +157,4 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Phone Number Field settings
 
 PHONENUMBER_DEFAULT_REGION = "RU"
+PHONENUMBER_LENGTH = 12

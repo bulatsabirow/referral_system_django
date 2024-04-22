@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
-from django.contrib.auth.models import UserManager, PermissionsMixin
+from django.contrib.auth.models import PermissionsMixin
 from django.core.validators import MinLengthValidator
 from django.db import models
 from drfpasswordless.models import AbstractBaseCallbackToken
@@ -16,7 +16,9 @@ def get_invite_code():
 
 class User(AbstractBaseUser):
     mobile = PhoneNumberField(
-        max_length=12, unique=True, validators=[MinLengthValidator(12)]
+        max_length=settings.PHONENUMBER_LENGTH,
+        unique=True,
+        validators=[MinLengthValidator(settings.PHONENUMBER_LENGTH)],
     )
     created_at = models.DateTimeField(auto_now_add=True)
     invite_code = models.CharField(
