@@ -9,6 +9,7 @@ from drfpasswordless.utils import verify_user_alias
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from user.fields import PhoneNumberField
 from user.models import CallbackToken
 from django.utils.translation import gettext_lazy as _
 
@@ -90,10 +91,11 @@ class CallbackTokenAuthSerializer(AbstractBaseCallbackTokenSerializer):
 
 class UserRetrieveSerializer(serializers.ModelSerializer):
     activated_invite_code = serializers.CharField(allow_null=True)
+    referee_set = serializers.ListSerializer(child=PhoneNumberField(), read_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "mobile", "invite_code", "activated_invite_code")
+        fields = ("id", "mobile", "invite_code", "activated_invite_code", "referee_set")
 
 
 class InviteCodeActivateSerializer(serializers.Serializer):

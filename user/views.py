@@ -116,7 +116,7 @@ class UserRetrieveUpdateAPIView(LookupFieldMixin, generics.RetrieveUpdateAPIView
                 activated_invite_code=F("referrer__invite_code")
             )
 
-        return self.queryset
+        return self.queryset.prefetch_related("referrer")
 
     def update(self, request, *args, **kwargs):
         super().update(request, *args, **kwargs)

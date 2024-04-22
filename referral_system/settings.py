@@ -56,6 +56,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+if DEBUG:
+    MIDDLEWARE.append("referral_system.query_debug.SqlPrintingMiddleware")
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "referral_system.authentication.BearerAuthentication",
