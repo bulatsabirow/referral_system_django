@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     "drfpasswordless",
     "phonenumber_field",
     "drf_spectacular",
-    "app",
     "user",
 ]
 
