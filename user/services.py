@@ -78,8 +78,11 @@ def validate_token_age(callback_token):
 
 class TokenService(object):
     @staticmethod
-    def send_token(user, alias_type, token_type, **message_payload):
-        token = create_callback_token_for_user(user, alias_type, token_type)
+    def create_token(user, alias_type, token_type):
+        return create_callback_token_for_user(user, alias_type, token_type)
+
+    @staticmethod
+    def send_token(user, token, alias_type, **message_payload):
         send_action = None
 
         if user.pk in api_settings.PASSWORDLESS_DEMO_USERS.keys():

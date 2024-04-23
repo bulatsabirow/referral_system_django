@@ -22,7 +22,7 @@ class AbstractBaseObtainCallbackToken(APIView):
     This returns a 6-digit callback token we can trade for a user's Auth Token.
     """
 
-    success_response = "A login token has been sent to you."
+    success_response = "A login token {token} has been sent to you."
     failure_response = "Unable to send you a login code. Try again later."
 
     message_payload = {}
@@ -55,13 +55,14 @@ class AbstractBaseObtainCallbackToken(APIView):
             user = serializer.validated_data["user"]
             # Create and send callback token
             # use overridden 'TokenService' class
+            token = TokenService.create_token(user, self.alias_type, self.token_type)
             success = TokenService.send_token(
-                user, self.alias_type, self.token_type, **self.message_payload
+                user, token, self.alias_type, **self.message_payload
             )
             # Respond With Success Or Failure of Sent
             if success:
                 status_code = status.HTTP_200_OK
-                response_detail = self.success_response
+                response_detail = self.success_response.format(token=token)
             else:
                 status_code = status.HTTP_400_BAD_REQUEST
                 response_detail = self.failure_response
@@ -75,8 +76,6 @@ class AbstractBaseObtainCallbackToken(APIView):
 class ObtainMobileCallbackToken(AbstractBaseObtainCallbackToken):
     permission_classes = (AllowAny,)
     serializer_class = MobileAuthSerializer
-    success_response = "We texted you a login code."
-    failure_response = "Unable to send you a login code. Try again later."
 
     alias_type = "mobile"
     token_type = CallbackToken.TOKEN_TYPE_AUTH
